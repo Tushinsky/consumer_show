@@ -44,7 +44,7 @@ buttonBtn.addEventListener("click", function (e) {
     // на кнопку входа ложим обработчик
     buttonNew.addEventListener("click", function (ev) {
         ev.preventDefault;// отменяем действие кнопки по-умолчанию
-        console.log(isRegistrate);
+        // console.log(isRegistrate);
         testRegistration();
 
     });
@@ -79,16 +79,31 @@ function testRegistration() {
 function testLogin(login, password) {
     // читаем файл с логинами и паролями
     let reader = new FileReader();// объект для чтения файлов
-    let file = new File([], "login/loging.csv");
-    reader.readAsText(file);
+
+    reader.addEventListener("loadstart", function (e) {
+        console.log("load start");
+    });
+    reader.addEventListener("loadend", function (e) {
+        console.log("load end");
+    });
+    reader.addEventListener("progress", function (e) {
+        console.log("progress...");
+    });
     reader.addEventListener("load", function (e) {
-        e.target.result.split('\n').forEach(element => {
-            console.log(element);
-        });
+        console.log("load...");
+        console.log("result " + reader.result);
+        // reader.result.split('\n\r').forEach(element => {
+        //     console.log(element);
+        // });
     });
     reader.addEventListener("error", function () {
         console.log(reader.error);
-    })
+    });
+
+    let file = new File([], "login/loging.csv");
+    console.log("name=" + file.name, "size=" + file.size, "type=" + file.type, "path=" + file.webkitRelativePath);
+    reader.readAsText(file);
+    console.log(reader.result);
 }
 // window.addEventListener("load", function (e) {
 //     // окно входа/регистрации
