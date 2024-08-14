@@ -4,6 +4,7 @@ let overlay_new;
 let close_popup_new;
 let pop_auto;
 let close_auto;
+let main_Page;
 // кнопки на окнах входа и регистрации
 let buttonExist = document.querySelector('.exist_but');
 let buttonNew = document.querySelector('.new_but');
@@ -45,12 +46,25 @@ buttonBtn.addEventListener("click", function (e) {
     buttonNew.addEventListener("click", function (ev) {
         ev.preventDefault;// отменяем действие кнопки по-умолчанию
         // console.log(isRegistrate);
-        testRegistration();
+        if (testRegistration()) {
+            showMainPage();
+        };
 
     });
 });
 
-
+// на кнопку входа ложим обработчик
+buttonExist.addEventListener("click", function (e) {
+    // получаем логин и пароль
+    let login = document.querySelector('.overlay_new .log input');
+    let pas = document.querySelector('.overlay_new .pas input');
+    // проверяем их
+    if (testLogin(login.value, pas.value)) {
+        showMainPage();
+    } else {
+        alert("Проверьте правильность ввода логина или пароля!");
+    }
+})
 
 /*
 если регистрируется новый пользователь, проверяем, чтобы логин и пароль не были пустыми, далее проверяем наличие уже существующего пользователя в файле зарегистрированных пользователей. Если такого нет, записываем нового пользователя, если есть, извещаем об этом и сбрасываем значения в полях ввода
@@ -66,45 +80,62 @@ function testRegistration() {
         // сброс значений
         pas.value = '';
         pasRepeat.value = '';
-        return;
+        return false;
     }
     if (login.value == '') {
         alert("Логин не может быть пустым");
+        return false;
     } else {
         // запись нового пользователя в файл
-        testLogin(login.value, pas.value);
+        return testLogin(login.value, pas.value);
     }
 }
 
 function testLogin(login, password) {
     // читаем файл с логинами и паролями
-    let reader = new FileReader();// объект для чтения файлов
+    // let reader = new FileReader();// объект для чтения файлов
 
-    reader.addEventListener("loadstart", function (e) {
-        console.log("load start");
-    });
-    reader.addEventListener("loadend", function (e) {
-        console.log("load end");
-    });
-    reader.addEventListener("progress", function (e) {
-        console.log("progress...");
-    });
-    reader.addEventListener("load", function (e) {
-        console.log("load...");
-        console.log("result " + reader.result);
-        // reader.result.split('\n\r').forEach(element => {
-        //     console.log(element);
-        // });
-    });
-    reader.addEventListener("error", function () {
-        console.log(reader.error);
-    });
+    // reader.addEventListener("load", function (e) {
+    //     console.log("load...");
+    //     console.log("result " + reader.result.split('\n\r').forEach(element => {
+    //         console.log(element);
+    //     }));
+    // });
+    // reader.addEventListener("error", function () {
+    //     console.log("error:" + reader.error);
+    // });
 
-    let file = new File([], "login/loging.csv");
-    console.log("name=" + file.name, "size=" + file.size, "type=" + file.type, "path=" + file.webkitRelativePath);
-    reader.readAsText(file);
-    console.log(reader.result);
+    // let file = new File([], "loging.csv");
+    // console.log("name=" + file.name, "size=" + file.size, "type=" + file.type, "path=" + file.webkitRelativePath);
+    // reader.readAsText(file);
+    // // console.log(reader.result);
+    return true;
 }
+
+function showMainPage() {
+    // всё в порядке, показываем страницу с данными
+    main_Page = document.querySelector('.main_');
+    main_Page.style.display = "flex";
+
+    let table = document.querySelector('table');// получаем таблицу в документе
+    // в цикле будем формировать и добавлять новые строки в эту таблицу
+    for (let i = 1; i <= 5; i++) {
+        let tr = document.createElement('tr');// создаём строку
+        // создаём столбцы таблицы и добавляем их в строку
+        let td1 = document.createElement('td');
+        td1.innerText = "address1";
+        let td2 = document.createElement('td');
+        td2.innerText = "count1";
+        let td3 = document.createElement('td');
+        let input = document.createElement('input');// в третьем столбце таблицы - поле ввода
+        td3.appendChild(input);
+        tr.append(td1);
+        tr.append(td2);
+        tr.append(td3);
+        table.append(tr);
+    }
+}
+
 // window.addEventListener("load", function (e) {
 //     // окно входа/регистрации
 //     overlay_new = document.querySelector('.overlay_new');
@@ -125,23 +156,6 @@ function testLogin(login, password) {
 
 
 
-// let table = document.querySelector('table');// получаем таблицу в документе
-// // в цикле будем формировать и добавлять новые строки в эту таблицу
-// for (let i = 1; i <= 5; i++) {
-//     let tr = document.createElement('tr');// создаём строку
-//     // создаём столбцы таблицы и добавляем их в строку
-//     let td1 = document.createElement('td');
-//     td1.innerText = "address1";
-//     let td2 = document.createElement('td');
-//     td2.innerText = "count1";
-//     let td3 = document.createElement('td');
-//     let input = document.createElement('input');// в третьем столбце таблицы - поле ввода
-//     td3.appendChild(input);
-//     tr.append(td1);
-//     tr.append(td2);
-//     tr.append(td3);
-//     table.append(tr);
-// }
 
 // $(document).ready(function () {
 //     // $('.button').click(function () {
