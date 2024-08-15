@@ -60,7 +60,8 @@ buttonExist.addEventListener("click", function (e) {
     let pas = document.querySelector('.overlay_new .pas input');
     // проверяем их
     if (testLogin(login.value, pas.value)) {
-        showMainPage();
+        overlay_new.style.display = "none";// скрываем окно входа
+        showMainPage();// выводим главную страницу
     } else {
         alert("Проверьте правильность ввода логина или пароля!");
     }
