@@ -19,7 +19,7 @@ body {
 .main_ {
 	display: none;
 	flex-direction: column;
-	row-gap: 20px;
+	row-gap: 50px;
 	margin: 50px;
 	background-color: #97fdf8e0;
 	padding: 20px;
@@ -36,6 +36,14 @@ body {
 	margin-right: 20px;
 }
 
+.report {
+	display: flex;
+	flex-direction: row;
+	column-gap: 100px;
+	width: 50%;
+	margin-top: 30px;
+}
+
 .objects {
 	align-items: center;
 	justify-content: center;
@@ -48,7 +56,6 @@ table {
 	border-collapse: collapse;
 	columns: 4;
 	caption-side: top;
-
 	width: 60%;
 
 }
@@ -56,6 +63,8 @@ table {
 th,
 td {
 	border: solid 1px black;
+	font-size: 14pt;
+
 }
 
 

@@ -93,24 +93,38 @@ function testRegistration() {
 }
 
 function testLogin(login, password) {
-    // читаем файл с логинами и паролями
-    // let reader = new FileReader();// объект для чтения файлов
+    let strData;
+    // получаем данные
+    getURL("login/loging.xml", "user", function (strData, error) {
+        if (error != null) {
+            console.log(`Failed to fetch login/loging.xml": ${error}`);
+        } else {
+            // разбираем их
+            console.log(strData);
+        }
+    });
 
-    // reader.addEventListener("load", function (e) {
-    //     console.log("load...");
-    //     console.log("result " + reader.result.split('\n\r').forEach(element => {
-    //         console.log(element);
-    //     }));
-    // });
-    // reader.addEventListener("error", function () {
-    //     console.log("error:" + reader.error);
-    // });
-
-    // let file = new File([], "loging.csv");
-    // console.log("name=" + file.name, "size=" + file.size, "type=" + file.type, "path=" + file.webkitRelativePath);
-    // reader.readAsText(file);
-    // // console.log(reader.result);
     return true;
+}
+
+function getURL(url, selector, callback) {
+    let req = new XMLHttpRequest();// объект запроса
+    req.open("GET", url, true);// открываем запрос
+    req.addEventListener("load", function () {
+        if (req.status < 400) {
+            // статус запроса - ошибок нет
+            callback(req.responseXML.querySelectorAll(selector));// возвращаем данные
+        } else {
+            // статус запроса - обработка ошибок
+            callback(null, new Error("Request failed: " +
+                req.statusText
+            ));
+        }
+    });
+    req.addEventListener("error", function () {
+        callback(null, new Error("Network error"))
+    });
+    req.send(null);
 }
 
 function showMainPage() {
