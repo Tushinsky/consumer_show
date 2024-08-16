@@ -1,4 +1,5 @@
 // переменные
+
 // всплывающие окна входа и регистрации
 let overlay_new;
 let close_popup_new;
@@ -100,10 +101,16 @@ function testLogin(login, password) {
             console.log(`Failed to fetch login/loging.xml": ${error}`);
         } else {
             // разбираем их
+            // console.log(strData.lenght);
             console.log(strData);
+            for (let i = 0; i < strData.length; i++) {
+                console.log(strData[i].getElementsByTagName("name").innerText);
+                console.log(strData[i].getElementsByTagName("password").toString);
+            };
+
         }
     });
-
+    // console.log(JSON.stringify(getURLJson("login/loging.json")));
     return true;
 }
 
@@ -113,7 +120,8 @@ function getURL(url, selector, callback) {
     req.addEventListener("load", function () {
         if (req.status < 400) {
             // статус запроса - ошибок нет
-            callback(req.responseXML.querySelectorAll(selector));// возвращаем данные
+            let elements = req.responseXML.getElementsByTagName(selector);
+            callback(elements, null);// возвращаем данные
         } else {
             // статус запроса - обработка ошибок
             callback(null, new Error("Request failed: " +
@@ -149,6 +157,27 @@ function showMainPage() {
         tr.append(td3);
         table.append(tr);
     }
+}
+
+function getURLJson(url) {
+    let req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.addEventListener("load", function () {
+        console.log("load...");
+        if (req.status < 400) {
+            let retval = req.responseText;
+            console.log("retval: " + retval);
+            return retval;
+        } else {
+            console.log(Error.toString);
+            return null;
+        }
+    });
+    req.addEventListener("error", function () {
+        console.log(Error.toString);
+        return null;
+    });
+
 }
 
 // window.addEventListener("load", function (e) {

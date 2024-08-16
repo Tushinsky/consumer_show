@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <users>
-	<user name="admin" password="12092072"/>
-	<user name="admin" password="23071982"/>
-	<user name="admin" password="22031964"/>
+	<user>
+		<name>admin</name><password>12092072</password>
+	</user>
+	<user>
+		<name>admin</name><password>23071982</password>
+	</user>
+	<user>
+		<name>admin</name><password>22031964</password>
+	</user>
+	
+	
+	
 </users>
