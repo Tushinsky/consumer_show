@@ -4,6 +4,7 @@ let overlay_new;
 let close_popup_new;
 let pop_auto;
 let close_auto;
+let main_Page;
 // кнопки на окнах входа и регистрации
 let buttonExist = document.querySelector('.exist_but');
 let buttonNew = document.querySelector('.new_but');
@@ -44,13 +45,27 @@ buttonBtn.addEventListener("click", function (e) {
     // на кнопку входа ложим обработчик
     buttonNew.addEventListener("click", function (ev) {
         ev.preventDefault;// отменяем действие кнопки по-умолчанию
-        console.log(isRegistrate);
-        testRegistration();
+        // console.log(isRegistrate);
+        if (testRegistration()) {
+            showMainPage();
+        };
 
     });
 });
 
-
+// на кнопку входа ложим обработчик
+buttonExist.addEventListener("click", function (e) {
+    // получаем логин и пароль
+    let login = document.querySelector('.overlay_new .log input');
+    let pas = document.querySelector('.overlay_new .pas input');
+    // проверяем их
+    if (testLogin(login.value, pas.value)) {
+        overlay_new.style.display = "none";// скрываем окно входа
+        showMainPage();// выводим главную страницу
+    } else {
+        alert("Проверьте правильность ввода логина или пароля!");
+    }
+})
 
 /*
 если регистрируется новый пользователь, проверяем, чтобы логин и пароль не были пустыми, далее проверяем наличие уже существующего пользователя в файле зарегистрированных пользователей. Если такого нет, записываем нового пользователя, если есть, извещаем об этом и сбрасываем значения в полях ввода
@@ -66,30 +81,76 @@ function testRegistration() {
         // сброс значений
         pas.value = '';
         pasRepeat.value = '';
-        return;
+        return false;
     }
     if (login.value == '') {
         alert("Логин не может быть пустым");
+        return false;
     } else {
         // запись нового пользователя в файл
-        testLogin(login.value, pas.value);
+        return testLogin(login.value, pas.value);
     }
 }
 
 function testLogin(login, password) {
-    // читаем файл с логинами и паролями
-    let reader = new FileReader();// объект для чтения файлов
-    let file = new File([], "login/loging.csv");
-    reader.readAsText(file);
-    reader.addEventListener("load", function (e) {
-        e.target.result.split('\n').forEach(element => {
-            console.log(element);
-        });
+    let strData;
+    // получаем данные
+    getURL("login/loging.xml", "user", function (strData, error) {
+        if (error != null) {
+            console.log(`Failed to fetch login/loging.xml": ${error}`);
+        } else {
+            // разбираем их
+            console.log(strData);
+        }
     });
-    reader.addEventListener("error", function () {
-        console.log(reader.error);
-    })
+
+    return true;
 }
+
+function getURL(url, selector, callback) {
+    let req = new XMLHttpRequest();// объект запроса
+    req.open("GET", url, true);// открываем запрос
+    req.addEventListener("load", function () {
+        if (req.status < 400) {
+            // статус запроса - ошибок нет
+            callback(req.responseXML.querySelectorAll(selector));// возвращаем данные
+        } else {
+            // статус запроса - обработка ошибок
+            callback(null, new Error("Request failed: " +
+                req.statusText
+            ));
+        }
+    });
+    req.addEventListener("error", function () {
+        callback(null, new Error("Network error"))
+    });
+    req.send(null);
+}
+
+function showMainPage() {
+    // всё в порядке, показываем страницу с данными
+    main_Page = document.querySelector('.main_');
+    main_Page.style.display = "flex";
+
+    let table = document.querySelector('table');// получаем таблицу в документе
+    // в цикле будем формировать и добавлять новые строки в эту таблицу
+    for (let i = 1; i <= 5; i++) {
+        let tr = document.createElement('tr');// создаём строку
+        // создаём столбцы таблицы и добавляем их в строку
+        let td1 = document.createElement('td');
+        td1.innerText = "address1";
+        let td2 = document.createElement('td');
+        td2.innerText = "count1";
+        let td3 = document.createElement('td');
+        let input = document.createElement('input');// в третьем столбце таблицы - поле ввода
+        td3.appendChild(input);
+        tr.append(td1);
+        tr.append(td2);
+        tr.append(td3);
+        table.append(tr);
+}
+}
+
 // window.addEventListener("load", function (e) {
 //     // окно входа/регистрации
 //     overlay_new = document.querySelector('.overlay_new');

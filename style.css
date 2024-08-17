@@ -11,17 +11,18 @@ body {
 	/*размер изображения на весь экран*/
 	background-repeat: no-repeat;
 	/*изображение не дублировать*/
+	align-items: center;
+	justify-content: center;
 }
 
-.shows_ {
-	display: none;
-}
 
 .main_ {
-	display: flex;
+	display: none;
 	flex-direction: column;
-	row-gap: 20px;
+	row-gap: 50px;
 	margin: 50px;
+	background-color: #97fdf8e0;
+	padding: 20px;
 }
 
 .consumer {
@@ -35,23 +36,35 @@ body {
 	margin-right: 20px;
 }
 
+.report {
+	display: flex;
+	flex-direction: row;
+	column-gap: 100px;
+	width: 50%;
+	margin-top: 30px;
+}
+
 .objects {
 	align-items: center;
 	justify-content: center;
 	width: 100%;
+	padding-top: 20px;
 }
 
 table {
 	border: solid 1px black;
 	border-collapse: collapse;
 	columns: 4;
-
+	caption-side: top;
 	width: 60%;
+
 }
 
 th,
 td {
 	border: solid 1px black;
+	font-size: 14pt;
+
 }
 
 
@@ -80,7 +93,9 @@ th:nth-child(2) {
 td input {
 	width: 100%;
 	border: none;
-	text-align: center;
+	text-align: right;
+	padding-right: 10px;
+	background-color: #97fafde0;
 }
 
 .button {
