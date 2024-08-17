@@ -59,7 +59,7 @@ buttonExist.addEventListener("click", function (e) {
     let login = document.querySelector('.overlay_new .log input');
     let pas = document.querySelector('.overlay_new .pas input');
     // проверяем их
-    if (testLogin(login.value, pas.value)) {
+    if (testLogin(login.value, pas.value) == true) {
         overlay_new.style.display = "none";// скрываем окно входа
         showMainPage();// выводим главную страницу
     } else {
@@ -94,17 +94,44 @@ function testRegistration() {
 
 function testLogin(login, password) {
     let strData;
-    // получаем данные
-    getURL("login/loging.xml", "user", function (strData, error) {
-        if (error != null) {
-            console.log(`Failed to fetch login/loging.xml": ${error}`);
+    let req = new XMLHttpRequest();// объект запроса
+    req.open("GET", "login/loging.csv", false);// открываем запрос
+    req.addEventListener("load", function () {
+        console.log("status=" + req.status);
+        if (req.status < 400) {
+            // статус запроса - ошибок нет
+            strData = req.responseText;
+            // console.log("strdata=" + strData);
+            if (strData == null) {
+                console.log("Failed to fetch login/loging.csv");
+                return false;
+            } else {
+                // разбираем их
+                console.log("data is exist");
+                let data = strData.split('\r');
+                // console.log("data=" + data, "lenght=" + data.length);
+                for(let i = 0; i < data.length; i++) {
+                    // console.log("i=" + i, data[i]);
+                    let user = data[i].split(';');
+                    console.log(user[0], login, user[1], password);
+                    if(user[0] == login && user[1] == password) {
+                        console.log("me are here");
+                        return true;
+                    }
+                }
+            }
+            
         } else {
-            // разбираем их
-            console.log(strData);
+            // статус запроса - обработка ошибок
+            return false;
         }
     });
-
-    return true;
+    req.addEventListener("error", function () {
+        let err = new Error();
+        console.log(err.message);
+        return false;
+    });
+    req.send(null);
 }
 
 function getURL(url, selector, callback) {
@@ -148,7 +175,30 @@ function showMainPage() {
         tr.append(td2);
         tr.append(td3);
         table.append(tr);
+    }
 }
+
+function getURLCSV(url) {
+    let req = new XMLHttpRequest();// объект запроса
+    req.addEventListener("load", function () {
+        console.log("status=" + req.status);
+        if (req.status < 400) {
+            // статус запроса - ошибок нет
+            let text = req.responseText;
+            console.log("text=" + text);
+            return text;// возвращаем данные
+        } else {
+            // статус запроса - обработка ошибок
+            return null;
+        }
+    });
+    req.addEventListener("error", function () {
+        let err = new Error();
+        console.log(err.message);
+        return null;
+    });
+    req.open("GET", url, false);// открываем запрос
+    req.send(null);
 }
 
 // window.addEventListener("load", function (e) {
