@@ -58,13 +58,20 @@ buttonExist.addEventListener("click", function (e) {
     // получаем логин и пароль
     let login = document.querySelector('.overlay_new .log input');
     let pas = document.querySelector('.overlay_new .pas input');
-    // проверяем их
-    if (testLogin(login.value, pas.value) == true) {
-        overlay_new.style.display = "none";// скрываем окно входа
-        showMainPage();// выводим главную страницу
+    if(login.value != "" && pas.value != "") {
+        // проверяем их
+        testLogin(login.value, pas.value);
     } else {
-        alert("Проверьте правильность ввода логина или пароля!");
+        alert("Поля для ввода логина и пароля не могут быть пустыми!");
     }
+    
+    // console.log("access=" + access);
+    // if (access) {
+    //     overlay_new.style.display = "none";// скрываем окно входа
+    //     showMainPage();// выводим главную страницу
+    // } else {
+    //     alert("Проверьте правильность ввода логина или пароля!");
+    // }
 })
 
 /*
@@ -88,48 +95,52 @@ function testRegistration() {
         return false;
     } else {
         // запись нового пользователя в файл
-        return testLogin(login.value, pas.value);
+        // return testLogin(login.value, pas.value);
     }
 }
 
 function testLogin(login, password) {
     let strData;
     let req = new XMLHttpRequest();// объект запроса
-    req.open("GET", "login/loging.csv", false);// открываем запрос
+    let retval;
+    req.open("GET", "login/loging.csv", true);// открываем запрос
     req.addEventListener("load", function () {
-        console.log("status=" + req.status);
+        // console.log("status=" + req.status);
         if (req.status < 400) {
             // статус запроса - ошибок нет
             strData = req.responseText;
-            // console.log("strdata=" + strData);
             if (strData == null) {
                 console.log("Failed to fetch login/loging.csv");
-                return false;
+                retval = false;
             } else {
                 // разбираем их
-                console.log("data is exist");
-                let data = strData.split('\r');
-                // console.log("data=" + data, "lenght=" + data.length);
+                let data = strData.split('\r\n');
                 for(let i = 0; i < data.length; i++) {
-                    // console.log("i=" + i, data[i]);
-                    let user = data[i].split(';');
-                    console.log(user[0], login, user[1], password);
-                    if(user[0] == login && user[1] == password) {
+                    let user = data[i].split(';');// элемент массива
+                    if((login == user[0]) && (password == user[1])) {
                         console.log("me are here");
-                        return true;
+                        retval = true;
+                        break;
                     }
                 }
             }
             
         } else {
             // статус запроса - обработка ошибок
-            return false;
+            retval = false;
+        }
+        console.log("retval=" + retval);
+        if(retval) {
+            overlay_new.style.display = "none";// скрываем окно входа
+            showMainPage();// выводим главную страницу
+        } else {
+            alert("Проверьте правильность ввода логина или пароля!");
         }
     });
     req.addEventListener("error", function () {
         let err = new Error();
         console.log(err.message);
-        return false;
+        
     });
     req.send(null);
 }
@@ -155,6 +166,7 @@ function getURL(url, selector, callback) {
 }
 
 function showMainPage() {
+    getOrganizationData();
     // всё в порядке, показываем страницу с данными
     main_Page = document.querySelector('.main_');
     main_Page.style.display = "flex";
@@ -185,7 +197,7 @@ function getURLCSV(url) {
         if (req.status < 400) {
             // статус запроса - ошибок нет
             let text = req.responseText;
-            console.log("text=" + text);
+            // console.log("text=" + text);
             return text;// возвращаем данные
         } else {
             // статус запроса - обработка ошибок
@@ -199,6 +211,25 @@ function getURLCSV(url) {
     });
     req.open("GET", url, false);// открываем запрос
     req.send(null);
+}
+
+/**
+ * Получает данные по организации и выводит их в форме
+ */
+function getOrganizationData(login) {
+    let strData = getURLCSV("login/organization.csv");// получаем данные
+    let dataArray = strData.split('\r\n');// получаем из данных массив
+    // ищем вхождение
+    let index = dataArray.indexOf(login);
+    if(index != -1) {
+        // если найден, получаем элемент, преобразуем его в массив
+        let org = dataArray[index].split(";");
+        // первый элемент - договор, второй - наименование, третий - код. Выводим
+        let spanOrg = document.querySelector(".organization");
+        spanOrg.innerHTML = org[1];
+        let spanAgreement = document.querySelector(".agreement");
+        spanOrg.innerHTML = org[0];
+    }
 }
 
 // window.addEventListener("load", function (e) {
