@@ -166,6 +166,7 @@ function getURL(url, selector, callback) {
 }
 
 function showMainPage(login) {
+    // получаем данные по организации
     getOrganizationData(login);
     // всё в порядке, показываем страницу с данными
     main_Page = document.querySelector('.main_');
@@ -256,6 +257,13 @@ function getOrganizationData(login) {
 
 }
 
+/**
+ * Возвращает данные по счётчикам данной организации
+ * @param id код организации
+ */
+function getObjectCount(id) {
+
+}
 // window.addEventListener("load", function (e) {
 //     // окно входа/регистрации
 //     overlay_new = document.querySelector('.overlay_new');
