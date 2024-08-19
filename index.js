@@ -58,13 +58,13 @@ buttonExist.addEventListener("click", function (e) {
     // получаем логин и пароль
     let login = document.querySelector('.overlay_new .log input');
     let pas = document.querySelector('.overlay_new .pas input');
-    if(login.value != "" && pas.value != "") {
+    if (login.value != "" && pas.value != "") {
         // проверяем их
         testLogin(login.value, pas.value);
     } else {
         alert("Поля для ввода логина и пароля не могут быть пустыми!");
     }
-    
+
     // console.log("access=" + access);
     // if (access) {
     //     overlay_new.style.display = "none";// скрываем окно входа
@@ -115,24 +115,24 @@ function testLogin(login, password) {
             } else {
                 // разбираем их
                 let data = strData.split('\r\n');
-                for(let i = 0; i < data.length; i++) {
+                for (let i = 0; i < data.length; i++) {
                     let user = data[i].split(';');// элемент массива
-                    if((login == user[0]) && (password == user[1])) {
+                    if ((login == user[0]) && (password == user[1])) {
                         console.log("me are here");
                         retval = true;
                         break;
                     }
                 }
             }
-            
+
         } else {
             // статус запроса - обработка ошибок
             retval = false;
         }
         console.log("retval=" + retval);
-        if(retval) {
+        if (retval) {
             overlay_new.style.display = "none";// скрываем окно входа
-            showMainPage();// выводим главную страницу
+            showMainPage(login);// выводим главную страницу
         } else {
             alert("Проверьте правильность ввода логина или пароля!");
         }
@@ -140,7 +140,7 @@ function testLogin(login, password) {
     req.addEventListener("error", function () {
         let err = new Error();
         console.log(err.message);
-        
+
     });
     req.send(null);
 }
@@ -165,8 +165,8 @@ function getURL(url, selector, callback) {
     req.send(null);
 }
 
-function showMainPage() {
-    getOrganizationData();
+function showMainPage(login) {
+    getOrganizationData(login);
     // всё в порядке, показываем страницу с данными
     main_Page = document.querySelector('.main_');
     main_Page.style.display = "flex";
@@ -190,24 +190,24 @@ function showMainPage() {
     }
 }
 
-function getURLCSV(url) {
+function getURLCSV(url, strData) {
     let req = new XMLHttpRequest();// объект запроса
     req.addEventListener("load", function () {
         console.log("status=" + req.status);
         if (req.status < 400) {
             // статус запроса - ошибок нет
-            let text = req.responseText;
+            strData = req.responseText;
             // console.log("text=" + text);
-            return text;// возвращаем данные
+            // return text;// возвращаем данные
         } else {
             // статус запроса - обработка ошибок
-            return null;
+            strData = null;
         }
     });
     req.addEventListener("error", function () {
         let err = new Error();
         console.log(err.message);
-        return null;
+        strData = null;
     });
     req.open("GET", url, false);// открываем запрос
     req.send(null);
@@ -217,19 +217,43 @@ function getURLCSV(url) {
  * Получает данные по организации и выводит их в форме
  */
 function getOrganizationData(login) {
-    let strData = getURLCSV("login/organization.csv");// получаем данные
-    let dataArray = strData.split('\r\n');// получаем из данных массив
-    // ищем вхождение
-    let index = dataArray.indexOf(login);
-    if(index != -1) {
-        // если найден, получаем элемент, преобразуем его в массив
-        let org = dataArray[index].split(";");
-        // первый элемент - договор, второй - наименование, третий - код. Выводим
-        let spanOrg = document.querySelector(".organization");
-        spanOrg.innerHTML = org[1];
-        let spanAgreement = document.querySelector(".agreement");
-        spanOrg.innerHTML = org[0];
-    }
+    let strData;
+    let req = new XMLHttpRequest();// объект запроса
+    req.addEventListener("load", function () {
+        if (req.status < 400) {
+            // статус запроса - ошибок нет
+            strData = req.responseText;
+            if (strData != null) {
+                let dataArray = strData.split('\r\n');// получаем из данных массив
+                // ищем вхождение
+                for (let i = 0; i < dataArray.length; i++) {
+                    let org = dataArray[i].split(";");
+                    if (org[0] == login) {
+                        // первый элемент - договор, второй - наименование, третий - код. Выводим
+                        let spanOrg = document.querySelector(".organization");
+                        spanOrg.innerHTML = "Наименование: <b><u>" + org[1] + "</u></b>";
+                        let spanAgreement = document.querySelector(".agreement");
+                        spanAgreement.innerHTML = "Договор: <b><u>" + org[0] + "</u></b>";
+                        break;
+                    }
+                }
+            } else {
+                console.log("Данных не найдено!");
+            }
+        } else {
+            // статус запроса - обработка ошибок
+            strData = null;
+        }
+    });
+    req.addEventListener("error", function () {
+        let err = new Error();
+        console.log(err.message);
+        strData = null;
+    });
+    req.open("GET", "login/organization.csv", false);// открываем запрос
+    req.send(null);
+
+
 }
 
 // window.addEventListener("load", function (e) {
