@@ -5,11 +5,15 @@ let close_popup_new;
 let pop_auto;
 let close_auto;
 let main_Page;
+let close_main;
 // кнопки на окнах входа и регистрации
 let buttonExist = document.querySelector('.exist_but');
 let buttonNew = document.querySelector('.new_but');
 let buttonBtn = document.querySelector('.btn');
 let isRegistrate = false;// флаг прохождения регистрации
+let idOrg = 0;// код организации
+let counters = [];// массив данных по счётчикам
+let strData;// данные, полученные в результате запроса
 
 // окно входа/регистрации
 overlay_new = document.querySelector('.overlay_new');
@@ -18,6 +22,7 @@ pop_auto = document.querySelector('.auto');
 // значок закрытия окна
 close_Popup_New = document.querySelector('.close-popup_new');
 close_auto = document.querySelector('.close-auto');
+close_main = document.querySelector('.close-main');
 // при загрузке страницы отображаем окно входа/регистрации
 setTimeout(() => {
     // let overlay_new = document.querySelector('.overlay_new');
@@ -34,6 +39,12 @@ close_Popup_New.addEventListener("click", function () {
 close_auto.addEventListener("click", function () {
     // при щелчке на крестике в углу окна входа/регистрации закрываем его
     pop_auto.style.display = "none";
+    // console.log("Close popup");
+});
+
+close_main.addEventListener("click", function () {
+    // при щелчке на крестике в углу окна закрываем его
+    main_Page.style.display = "none";
     // console.log("Close popup");
 });
 
@@ -100,49 +111,30 @@ function testRegistration() {
 }
 
 function testLogin(login, password) {
-    let strData;
-    let req = new XMLHttpRequest();// объект запроса
+    getURLCSV("login/loging.csv");// получаем данные
     let retval;
-    req.open("GET", "login/loging.csv", true);// открываем запрос
-    req.addEventListener("load", function () {
-        // console.log("status=" + req.status);
-        if (req.status < 400) {
-            // статус запроса - ошибок нет
-            strData = req.responseText;
-            if (strData == null) {
-                console.log("Failed to fetch login/loging.csv");
-                retval = false;
-            } else {
-                // разбираем их
-                let data = strData.split('\r\n');
-                for (let i = 0; i < data.length; i++) {
-                    let user = data[i].split(';');// элемент массива
-                    if ((login == user[0]) && (password == user[1])) {
-                        console.log("me are here");
-                        retval = true;
-                        break;
-                    }
-                }
+    if (strData == null) {
+        console.log("Failed to fetch login/loging.csv");
+        retval = false;
+    } else {
+        // разбираем их
+        let data = strData.split('\r\n');
+        for (let i = 0; i < data.length; i++) {
+            let user = data[i].split(';');// элемент массива
+            if ((login == user[0]) && (password == user[1])) {
+                console.log("me are here");
+                retval = true;
+                break;
             }
-
-        } else {
-            // статус запроса - обработка ошибок
-            retval = false;
         }
-        console.log("retval=" + retval);
-        if (retval) {
-            overlay_new.style.display = "none";// скрываем окно входа
-            showMainPage(login);// выводим главную страницу
-        } else {
-            alert("Проверьте правильность ввода логина или пароля!");
-        }
-    });
-    req.addEventListener("error", function () {
-        let err = new Error();
-        console.log(err.message);
+    }
+    if (retval) {
+        overlay_new.style.display = "none";// скрываем окно входа
+        showMainPage(login);// выводим главную страницу
+    } else {
+        alert("Проверьте правильность ввода логина или пароля!");
+    }
 
-    });
-    req.send(null);
 }
 
 function getURL(url, selector, callback) {
@@ -168,19 +160,21 @@ function getURL(url, selector, callback) {
 function showMainPage(login) {
     // получаем данные по организации
     getOrganizationData(login);
+    getObjectCount();
+    console.log("counters" + counters);
     // всё в порядке, показываем страницу с данными
     main_Page = document.querySelector('.main_');
     main_Page.style.display = "flex";
 
     let table = document.querySelector('table');// получаем таблицу в документе
     // в цикле будем формировать и добавлять новые строки в эту таблицу
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= counters.length; i++) {
         let tr = document.createElement('tr');// создаём строку
         // создаём столбцы таблицы и добавляем их в строку
         let td1 = document.createElement('td');
-        td1.innerText = "address1";
+        td1.innerText = counters[i - 1][2];
         let td2 = document.createElement('td');
-        td2.innerText = "count1";
+        td2.innerText = counters[i - 1][3];
         let td3 = document.createElement('td');
         let input = document.createElement('input');// в третьем столбце таблицы - поле ввода
         td3.appendChild(input);
@@ -191,7 +185,7 @@ function showMainPage(login) {
     }
 }
 
-function getURLCSV(url, strData) {
+function getURLCSV(url) {
     let req = new XMLHttpRequest();// объект запроса
     req.addEventListener("load", function () {
         console.log("status=" + req.status);
@@ -218,51 +212,49 @@ function getURLCSV(url, strData) {
  * Получает данные по организации и выводит их в форме
  */
 function getOrganizationData(login) {
-    let strData;
-    let req = new XMLHttpRequest();// объект запроса
-    req.addEventListener("load", function () {
-        if (req.status < 400) {
-            // статус запроса - ошибок нет
-            strData = req.responseText;
-            if (strData != null) {
-                let dataArray = strData.split('\r\n');// получаем из данных массив
-                // ищем вхождение
-                for (let i = 0; i < dataArray.length; i++) {
-                    let org = dataArray[i].split(";");
-                    if (org[0] == login) {
-                        // первый элемент - договор, второй - наименование, третий - код. Выводим
-                        let spanOrg = document.querySelector(".organization");
-                        spanOrg.innerHTML = "Наименование: <b><u>" + org[1] + "</u></b>";
-                        let spanAgreement = document.querySelector(".agreement");
-                        spanAgreement.innerHTML = "Договор: <b><u>" + org[0] + "</u></b>";
-                        break;
-                    }
-                }
-            } else {
-                console.log("Данных не найдено!");
+    getURLCSV("login/organization.csv");
+    if (strData != null) {
+        let dataArray = strData.split('\r\n');// получаем из данных массив
+        // ищем вхождение
+        for (let i = 0; i < dataArray.length; i++) {
+            let org = dataArray[i].split(";");
+            if (org[0] == login) {
+                // первый элемент - договор, второй - наименование, третий - код. Выводим
+                idOrg = org[2];
+                let spanOrg = document.querySelector(".organization");
+                spanOrg.innerHTML = "Наименование: <b><u>" + org[1] + "</u></b>";
+                let spanAgreement = document.querySelector(".agreement");
+                spanAgreement.innerHTML = "Договор: <b><u>" + org[0] + "</u></b>";
+                break;
             }
-        } else {
-            // статус запроса - обработка ошибок
-            strData = null;
         }
-    });
-    req.addEventListener("error", function () {
-        let err = new Error();
-        console.log(err.message);
-        strData = null;
-    });
-    req.open("GET", "login/organization.csv", false);// открываем запрос
-    req.send(null);
 
+    } else {
+        console.log("Данных не найдено!");
+
+    }
 
 }
 
 /**
  * Возвращает данные по счётчикам данной организации
- * @param id код организации
  */
-function getObjectCount(id) {
-
+function getObjectCount() {
+    // структура файла counters.csv - код организации, код объекта, адрес, № счётчика
+    getURLCSV("login/counters.csv");
+    if (strData != null) {
+        let dataArray = strData.split('\r\n');// получаем из данных массив
+        // ищем вхождение
+        for (let i = 0; i < dataArray.length; i++) {
+            let org = dataArray[i].split(";");
+            if (org[0] == idOrg) {
+                counters.push(org);
+                console.log(counters);
+            }
+        }
+    } else {
+        console.log("Данных не найдено!");
+    }
 }
 // window.addEventListener("load", function (e) {
 //     // окно входа/регистрации

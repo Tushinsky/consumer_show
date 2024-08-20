@@ -6,7 +6,7 @@
 
 body {
 	margin: 0;
-	background-image: url(img/marcus-ganahl-NyH-jxg-FRU-unsplash.jpg);
+	background-image: url(img/istockphoto-1019262232-612x612.jpg);
 	background-size: cover;
 	/*размер изображения на весь экран*/
 	background-repeat: no-repeat;
@@ -21,7 +21,7 @@ body {
 	flex-direction: column;
 	row-gap: 50px;
 	margin: 50px;
-	background-color: #97fdf8e0;
+	background-color: #cde4e0e0;
 	padding: 20px;
 }
 
@@ -95,7 +95,7 @@ td input {
 	border: none;
 	text-align: right;
 	padding-right: 10px;
-	background-color: #97fafde0;
+	background-color: #c9dad4e0;
 }
 
 .button {
@@ -211,11 +211,23 @@ td input {
 	height: 23px;
 }
 
+.close-main img {
+	width: 30px;
+	height: 30px;
+}
+
 .close-popup_new,
 .close-auto {
 	position: absolute;
 	top: 15px;
 	right: 15px;
+	cursor: pointer;
+}
+
+.close-main {
+	position: absolute;
+	top: 35px;
+	right: 35px;
 	cursor: pointer;
 }
 
