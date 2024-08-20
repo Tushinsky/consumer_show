@@ -23,11 +23,18 @@ pop_auto = document.querySelector('.auto');
 close_Popup_New = document.querySelector('.close-popup_new');
 close_auto = document.querySelector('.close-auto');
 close_main = document.querySelector('.close-main');
-// при загрузке страницы отображаем окно входа/регистрации
-setTimeout(() => {
-    // let overlay_new = document.querySelector('.overlay_new');
-    overlay_new.style.display = "block";
-}, 1000);
+initialize();// при загрузке страницы отображаем окно входа
+
+/**
+ * Инициализация страницы с загрузки формы входа
+ */
+function initialize() {
+    setTimeout(() => {
+        // let overlay_new = document.querySelector('.overlay_new');
+        overlay_new.style.display = "block";
+    }, 1000);
+
+}
 
 // на значок закрытия ложим обработчик
 close_Popup_New.addEventListener("click", function () {
@@ -45,6 +52,7 @@ close_auto.addEventListener("click", function () {
 close_main.addEventListener("click", function () {
     // при щелчке на крестике в углу окна закрываем его
     main_Page.style.display = "none";
+    initialize();// отображаем окно входа
     // console.log("Close popup");
 });
 
