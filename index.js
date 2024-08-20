@@ -185,6 +185,14 @@ function showMainPage(login) {
         td2.innerText = counters[i - 1][3];
         let td3 = document.createElement('td');
         let input = document.createElement('input');// в третьем столбце таблицы - поле ввода
+        // для поля ввода добавляем обработчик нажатия клавиш
+        input.addEventListener("keydown", function (e) {
+            e.preventDefault;// отменяем действие по умолчанию
+            if (e.key == "Enter") {
+                // если нажата клавиша ввода
+                td3.innerHTML = this.value;
+            }
+        })
         td3.appendChild(input);
         tr.append(td1);
         tr.append(td2);
