@@ -30,8 +30,10 @@ initialize();// при загрузке страницы отображаем о
  */
 function initialize() {
     setTimeout(() => {
-        // let overlay_new = document.querySelector('.overlay_new');
+        // отображаем форму ввода
         overlay_new.style.display = "block";
+        // фокус на поле ввода логина
+        document.querySelector('.overlay_new .popup_new .log input').focus();
     }, 1000);
 
 }
@@ -118,6 +120,11 @@ function testRegistration() {
     }
 }
 
+/**
+ * Проверяет логин и пароль подключившегося пользователя
+ * @param {String} login логин пользователя
+ * @param {String} password пароль пользователя
+ */
 function testLogin(login, password) {
     getURLCSV("login/loging.csv");// получаем данные
     let retval;
@@ -187,12 +194,12 @@ function showMainPage(login) {
         let input = document.createElement('input');// в третьем столбце таблицы - поле ввода
         // для поля ввода добавляем обработчик нажатия клавиш
         input.addEventListener("keydown", function (e) {
-            e.preventDefault;// отменяем действие по умолчанию
             if (e.key == "Enter") {
-                // если нажата клавиша ввода
-                td3.innerHTML = this.value;
+                // если нажата клавиша ввода, снимаем фокус
+                input.blur();
             }
-        })
+        });
+
         td3.appendChild(input);
         tr.append(td1);
         tr.append(td2);
