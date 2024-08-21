@@ -11,7 +11,7 @@ let buttonExist = document.querySelector('.exist_but');
 let buttonNew = document.querySelector('.new_but');
 let buttonBtn = document.querySelector('.btn');
 // кнопка отправки данных
-let btnSubmit = document.querySelector('.main .report button');
+let btnSubmit;
 
 let idOrg = 0;// код организации
 let counters = [];// массив данных по счётчикам
@@ -178,7 +178,8 @@ function showMainPage(login) {
     // всё в порядке, показываем страницу с данными
     main_Page = document.querySelector('.main_');
     main_Page.style.display = "flex";
-
+    btnSubmit = document.querySelector('.main .shows .report button');
+    console.log(btnSubmit);
     let table = document.querySelector('table');// получаем таблицу в документе
     // в цикле будем формировать и добавлять новые строки в эту таблицу
     for (let i = 1; i <= counters.length; i++) {
