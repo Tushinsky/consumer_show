@@ -10,7 +10,9 @@ let close_main;
 let buttonExist = document.querySelector('.exist_but');
 let buttonNew = document.querySelector('.new_but');
 let buttonBtn = document.querySelector('.btn');
-let isRegistrate = false;// флаг прохождения регистрации
+// кнопка отправки данных
+let btnSubmit = document.querySelector('.main .report button');
+
 let idOrg = 0;// код организации
 let counters = [];// массив данных по счётчикам
 let strData;// данные, полученные в результате запроса
@@ -195,6 +197,10 @@ function showMainPage(login) {
                 input.blur();
             }
         });
+        input.addEventListener("input", function (e) {
+            // при изменении в полях ввода даём доступ к кнопке отправки данных
+            btnSubmit.setAttribute('disabled', false);
+        })
 
         td3.appendChild(input);
         tr.append(td1);
