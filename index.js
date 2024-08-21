@@ -85,14 +85,6 @@ buttonExist.addEventListener("click", function (e) {
     } else {
         alert("Поля для ввода логина и пароля не могут быть пустыми!");
     }
-
-    // console.log("access=" + access);
-    // if (access) {
-    //     overlay_new.style.display = "none";// скрываем окно входа
-    //     showMainPage();// выводим главную страницу
-    // } else {
-    //     alert("Проверьте правильность ввода логина или пароля!");
-    // }
 })
 
 /*
@@ -172,6 +164,10 @@ function getURL(url, selector, callback) {
     req.send(null);
 }
 
+/**
+ * Отображает главную страницу с данными пользователя
+ * @param {логин подключившегося пользователя} login 
+ */
 function showMainPage(login) {
     // получаем данные по организации
     getOrganizationData(login);
@@ -208,6 +204,10 @@ function showMainPage(login) {
     }
 }
 
+/**
+ * Читает данные из файла по указанному URL
+ * @param {адрес (путь) файла для чтения} url 
+ */
 function getURLCSV(url) {
     let req = new XMLHttpRequest();// объект запроса
     req.addEventListener("load", function () {
